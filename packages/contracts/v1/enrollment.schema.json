@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://disclosure-gap.invalid/contracts/v1/enrollment.schema.json",
+  "title": "Enrollment request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contractVersion", "ageBand", "consentVersion", "consentAction"],
+  "properties": {
+    "contractVersion": { "const": "1.0.0-draft" },
+    "ageBand": {
+      "enum": [
+        "under_18",
+        "18_19",
+        "20_22",
+        "23_or_older",
+        "prefer_not_to_answer"
+      ]
+    },
+    "consentVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "consentAction": { "enum": ["agree", "do_not_agree"] }
+  }
+}

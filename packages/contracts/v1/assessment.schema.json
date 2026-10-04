@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://disclosure-gap.invalid/contracts/v1/assessment.schema.json",
+  "title": "APA SAD-D Adult assessment submission",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contractVersion",
+    "assessmentType",
+    "instrumentName",
+    "instrumentVersion",
+    "language",
+    "responses",
+    "completedAt"
+  ],
+  "properties": {
+    "contractVersion": { "const": "1.0.0-draft" },
+    "assessmentType": { "enum": ["baseline", "follow_up"] },
+    "instrumentName": { "const": "apa_dsm5tr_sad_adult" },
+    "instrumentVersion": { "const": "DSM-5-TR-2022" },
+    "language": { "const": "en" },
+    "responses": {
+      "type": "array",
+      "minItems": 10,
+      "maxItems": 10,
+      "prefixItems": [
+        { "$ref": "#/$defs/SAD01" },
+        { "$ref": "#/$defs/SAD02" },
+        { "$ref": "#/$defs/SAD03" },
+        { "$ref": "#/$defs/SAD04" },
+        { "$ref": "#/$defs/SAD05" },
+        { "$ref": "#/$defs/SAD06" },
+        { "$ref": "#/$defs/SAD07" },
+        { "$ref": "#/$defs/SAD08" },
+        { "$ref": "#/$defs/SAD09" },
+        { "$ref": "#/$defs/SAD10" }
+      ],
+      "items": false
+    },
+    "completedAt": { "type": "string", "format": "date-time" }
+  },
+  "$defs": {
+    "responseCode": {
+      "oneOf": [
+        { "type": "integer", "minimum": 0, "maximum": 4 },
+        { "const": "prefer_not_to_answer" }
+      ]
+    },
+    "SAD01": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["itemCode", "responseCode"],
+      "properties": {
+        "itemCode": { "const": "SAD01" },
+        "responseCode": { "$ref": "#/$defs/responseCode" }
+      }
+    },
+    "SAD02": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["itemCode", "responseCode"],
+      "properties": {
+        "itemCode": { "const": "SAD02" },
+        "responseCode": { "$ref": "#/$defs/responseCode" }
+      }
+    },
+    "SAD03": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["itemCode", "responseCode"],
+      "properties": {
+        "itemCode": { "const": "SAD03" },
+        "responseCode": { "$ref": "#/$defs/responseCode" }
+      }
+    },
+    "SAD04": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["itemCode", "responseCode"],
+      "properties": {
+        "itemCode": { "const": "SAD04" },
+        "responseCode": { "$ref": "#/$defs/responseCode" }
+      }
+    },
+    "SAD05": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["itemCode", "responseCode"],
+      "properties": {
+        "itemCode": { "const": "SAD05" },
+        "responseCode": { "$ref": "#/$defs/responseCode" }
+      }
+    },
+    "SAD06": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["itemCode", "responseCode"],
+      "properties": {
+        "itemCode": { "const": "SAD06" },
+        "responseCode": { "$ref": "#/$defs/responseCode" }
+      }
+    },
+    "SAD07": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["itemCode", "responseCode"],
+      "properties": {
+        "itemCode": { "const": "SAD07" },
+        "responseCode": { "$ref": "#/$defs/responseCode" }
+      }
+    },
+    "SAD08": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["itemCode", "responseCode"],
+      "properties": {
+        "itemCode": { "const": "SAD08" },
+        "responseCode": { "$ref": "#/$defs/responseCode" }
+      }
+    },
+    "SAD09": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["itemCode", "responseCode"],
+      "properties": {
+        "itemCode": { "const": "SAD09" },
+        "responseCode": { "$ref": "#/$defs/responseCode" }
+      }
+    },
+    "SAD10": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["itemCode", "responseCode"],
+      "properties": {
+        "itemCode": { "const": "SAD10" },
+        "responseCode": { "$ref": "#/$defs/responseCode" }
+      }
+    }
+  }
+}

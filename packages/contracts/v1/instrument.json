@@ -1,0 +1,35 @@
+{
+  "instrumentContractVersion": "1.0.0",
+  "instrumentName": "apa_dsm5tr_sad_adult",
+  "instrumentVersion": "DSM-5-TR-2022",
+  "language": "en",
+  "title": "Severity Measure for Social Anxiety Disorder (Social Phobia)—Adult",
+  "rightsHolder": "American Psychiatric Association",
+  "researchReproductionPermission": true,
+  "normativeSource": "https://www.psychiatry.org/File%20Library/Psychiatrists/Practice/DSM/DSM-5-TR/APA-DSM5TR-SeverityMeasureForSocialAnxietyDisorderAdult.pdf",
+  "itemCodesInOrder": [
+    "SAD01",
+    "SAD02",
+    "SAD03",
+    "SAD04",
+    "SAD05",
+    "SAD06",
+    "SAD07",
+    "SAD08",
+    "SAD09",
+    "SAD10"
+  ],
+  "responseCodes": [0, 1, 2, 3, 4, "prefer_not_to_answer"],
+  "scoring": {
+    "complete": "sum all 10 numeric responses",
+    "prorated": "when 8 or 9 responses are numeric: round((numeric sum * 10) / numeric count) to nearest whole number",
+    "missing": "when 7 or fewer responses are numeric",
+    "range": [0, 40],
+    "primaryValue": "raw_or_prorated_total"
+  },
+  "displayRestrictions": [
+    "do not display a diagnosis",
+    "do not display a severity label or cutoff",
+    "do not imply APA endorsement"
+  ]
+}

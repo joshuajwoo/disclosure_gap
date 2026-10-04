@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://disclosure-gap.invalid/contracts/v1/trends.schema.json",
+  "title": "Participant descriptive trends response",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contractVersion", "completedCheckIns", "eligibleWantedWeeks"],
+  "properties": {
+    "contractVersion": { "const": "1.0.0-draft" },
+    "completedCheckIns": { "type": "integer", "minimum": 0, "maximum": 4 },
+    "eligibleWantedWeeks": { "type": "integer", "minimum": 0, "maximum": 4 },
+    "sharedWeeks": { "type": "integer", "minimum": 0, "maximum": 4 },
+    "keptPrivateWeeks": { "type": "integer", "minimum": 0, "maximum": 4 },
+    "summaryAvailable": { "type": "boolean" }
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://disclosure-gap.invalid/contracts/v1/baseline-context.schema.json",
+  "title": "Baseline context submission",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contractVersion",
+    "supportConfidence",
+    "everydayComfort",
+    "insecurityComfort",
+    "completedAt"
+  ],
+  "properties": {
+    "contractVersion": { "const": "1.0.0-draft" },
+    "supportConfidence": {
+      "oneOf": [
+        { "type": "integer", "minimum": 1, "maximum": 5 },
+        { "enum": ["no_person", "prefer_not_to_answer"] }
+      ]
+    },
+    "everydayComfort": { "$ref": "#/$defs/ordinalResponse" },
+    "insecurityComfort": { "$ref": "#/$defs/ordinalResponse" },
+    "completedAt": { "type": "string", "format": "date-time" }
+  },
+  "$defs": {
+    "ordinalResponse": {
+      "oneOf": [
+        { "type": "integer", "minimum": 1, "maximum": 5 },
+        { "enum": ["not_applicable", "prefer_not_to_answer"] }
+      ]
+    }
+  }
+}

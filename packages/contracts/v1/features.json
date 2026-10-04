@@ -1,0 +1,56 @@
+{
+  "featureContractVersion": "1.0.0-draft",
+  "globalRules": {
+    "timeCutoff": "check_in.completed_at < follow_up.completed_at",
+    "primaryMinimumCompletedCheckIns": 3,
+    "missingIsNeverZero": true,
+    "sourceRowsAreImmutable": true
+  },
+  "features": [
+    {
+      "name": "intention_action_gap",
+      "status": "primary",
+      "numerator": "wanted_to_share=yes AND sharing_action IN (not_shared, chose_private)",
+      "denominator": "wanted_to_share=yes AND sharing_action IN (shared, not_shared, chose_private)",
+      "output": "float in [0,1]",
+      "missingWhen": "denominator=0 OR completed_check_ins<3"
+    },
+    {
+      "name": "audience_asymmetry",
+      "status": "exploratory",
+      "calculation": "mean(expected_comfort where audience=friend) - mean(expected_comfort where audience=family)",
+      "output": "float in [-4,4]",
+      "missingWhen": "either audience has no numeric observation"
+    },
+    {
+      "name": "topic_sensitivity_gap",
+      "status": "exploratory",
+      "calculation": "baseline_everyday_comfort - baseline_insecurity_comfort",
+      "output": "float in [-4,4]",
+      "missingWhen": "either source is nonnumeric"
+    },
+    {
+      "name": "anticipated_judgment_rate",
+      "status": "exploratory-leakage-sensitive",
+      "numerator": "anticipated_judgment=yes",
+      "denominator": "anticipated_judgment IN (yes,no)",
+      "output": "float in [0,1]",
+      "missingWhen": "denominator=0"
+    },
+    {
+      "name": "support_mismatch_rate",
+      "status": "exploratory",
+      "numerator": "wanted_to_share=yes AND support_confidence<=2",
+      "denominator": "wanted_to_share=yes AND numeric support_confidence",
+      "output": "float in [0,1]",
+      "missingWhen": "denominator=0"
+    },
+    {
+      "name": "within_person_comfort_variability",
+      "status": "exploratory",
+      "calculation": "sample standard deviation of numeric expected_comfort",
+      "output": "nonnegative float",
+      "missingWhen": "fewer than 2 numeric observations"
+    }
+  ]
+}

@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://disclosure-gap.invalid/contracts/v1/check-in.schema.json",
+  "title": "Weekly check-in submission",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contractVersion", "week", "wantedToShare", "completedAt"],
+  "properties": {
+    "contractVersion": { "const": "1.0.0-draft" },
+    "week": { "type": "integer", "minimum": 1, "maximum": 4 },
+    "wantedToShare": {
+      "enum": ["yes", "no", "not_sure", "prefer_not_to_answer"]
+    },
+    "intendedAudience": {
+      "enum": [
+        "friend",
+        "family",
+        "partner",
+        "other_trusted",
+        "no_particular_person",
+        "prefer_not_to_answer"
+      ]
+    },
+    "sharingAction": {
+      "enum": [
+        "shared",
+        "not_shared",
+        "chose_private",
+        "no_safe_opportunity",
+        "not_applicable",
+        "prefer_not_to_answer"
+      ]
+    },
+    "expectedComfort": { "$ref": "#/$defs/ordinalResponse" },
+    "anticipatedJudgment": {
+      "enum": [
+        "yes",
+        "no",
+        "shared_as_wanted",
+        "not_applicable",
+        "prefer_not_to_answer"
+      ]
+    },
+    "supportConfidence": { "$ref": "#/$defs/ordinalResponse" },
+    "concernCategory": {
+      "enum": [
+        "everyday",
+        "personal_insecurity",
+        "other",
+        "prefer_not_to_answer"
+      ]
+    },
+    "completedAt": { "type": "string", "format": "date-time" }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "wantedToShare": { "const": "yes" } },
+        "required": ["wantedToShare"]
+      },
+      "then": {
+        "required": [
+          "intendedAudience",
+          "sharingAction",
+          "expectedComfort",
+          "anticipatedJudgment",
+          "supportConfidence",
+          "concernCategory"
+        ]
+      },
+      "else": {
+        "not": {
+          "anyOf": [
+            { "required": ["intendedAudience"] },
+            { "required": ["sharingAction"] },
+            { "required": ["expectedComfort"] },
+            { "required": ["anticipatedJudgment"] },
+            { "required": ["supportConfidence"] },
+            { "required": ["concernCategory"] }
+          ]
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "ordinalResponse": {
+      "oneOf": [
+        { "type": "integer", "minimum": 1, "maximum": 5 },
+        { "enum": ["not_applicable", "prefer_not_to_answer"] }
+      ]
+    }
+  }
+}

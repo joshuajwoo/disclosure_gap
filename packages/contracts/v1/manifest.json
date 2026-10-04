@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "contractVersion": "1.0.0-draft",
+  "status": "synthetic-only",
+  "schemas": {
+    "enrollment": "enrollment.schema.json",
+    "baselineContext": "baseline-context.schema.json",
+    "assessment": "assessment.schema.json",
+    "checkIn": "check-in.schema.json",
+    "trends": "trends.schema.json"
+  },
+  "featureDefinitions": "features.json",
+  "instrumentDefinition": "instrument.json",
+  "outcomeInstrument": {
+    "status": "selected-research-reproduction-permitted",
+    "name": "apa_dsm5tr_sad_adult",
+    "version": "DSM-5-TR-2022",
+    "itemsIncluded": false,
+    "wordingSource": "official-normative-pdf"
+  }
+}

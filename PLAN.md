@@ -1,50 +1,105 @@
-# The Disclosure Gap — Implementation Plan
+# The Disclosure Gap — Privacy-First Longitudinal Research Platform
 
-## Project summary
+## Project intent
 
-Build a research-oriented software system that explores whether the gap between **wanting to share something personal** and **actually sharing it** is associated with social anxiety among people ages 18–22. A small web application collects opt-in, structured check-ins; a reproducible Python pipeline engineers relationship-specific features and tests a preregistered hypothesis. The public portfolio demo uses synthetic data. The project does **not** diagnose individuals or infer that choosing privacy is unhealthy.
+This project begins with a question I find personally meaningful: what can be learned from the moments when someone wants support from a trusted person but decides not to ask for it?
 
-**Research question:** After accounting for baseline social anxiety, does a greater intention–action gap over four weeks associate with a higher social anxiety score at follow-up?
+I am not presenting that question as a new psychological breakthrough. Social anxiety, avoidance, self-disclosure, and help-seeking already have substantial research literatures. My ambition is to use this domain as a demanding case study for building thoughtful software: a longitudinal data-collection system that treats sensitive information carefully, makes its assumptions explicit, and produces reproducible analysis.
 
-**Primary outcome:** Follow-up score on a validated social anxiety measure, analyzed as a continuous score. The Mini-SPIN is a possible short measure with adolescent validation; confirm its permitted use and suitability for repeated measurement before implementation. Keep the outcome questionnaire separate from predictor questions to reduce circularity.
+The primary contribution is therefore the engineering system—not a claim that the software discovers, diagnoses, or predicts social anxiety. A public portfolio version will use synthetic data. Any work with real participants will require the appropriate institutional review and will be described as a limited, exploratory pilot unless its design and sample justify stronger conclusions.
 
-**Primary feature:** Proportion of check-ins where a participant wanted to share a personal concern with someone they identified as trusted, but chose not to. This is a behavioral report, not a clinical symptom.
+### Central engineering objective
 
-## Scope and research design
+Build a privacy-conscious platform that can:
 
-1. Enroll adults ages 18–22 who explicitly consent. Start with synthetic data and internal usability testing. Review any university or institutional research requirements before recruiting real participants, especially if the work will be presented as human-subjects research.
-2. At baseline, collect age band, optional contextual variables, the validated social anxiety measure, and structured questions about perceived support and sharing comfort. Avoid names, message contents, contacts, exact locations, and social-media account access.
-3. Collect one short check-in per week for four weeks. Ask whether the participant wanted to discuss a personal concern, with whom (friend, family, partner, other trusted person, or no one), whether they did so, comfort level, and whether anticipated judgment was a reason for holding back. Include “not applicable,” “prefer not to answer,” and “I chose to keep it private” options.
-4. Repeat the social anxiety measure at follow-up. The web app shows only the participant's own descriptive trends, with neutral language. It does not display a diagnostic label, predicted risk, or treatment advice.
-5. Analyze aggregate, de-identified data. Record the hypothesis, feature definitions, exclusion rules, and evaluation plan before inspecting outcomes. Treat results as exploratory if recruitment or sample size cannot support the planned analysis.
+- collect versioned baseline, repeated check-in, and follow-up responses;
+- enforce temporal and data-integrity rules across a multi-week study;
+- support consent, withdrawal, and deletion as real product workflows;
+- export de-identified data through a restricted and auditable path;
+- transform raw records into documented, testable features; and
+- reproduce tables and figures from a clean environment with one command.
 
-**Important interpretation:** Lower disclosure can reflect healthy boundaries, unsafe relationships, culture, or a simple preference for privacy. The study tests association, not causation or the ability to detect undisclosed illness. A short convenience sample will not represent all 18–22-year-olds. Extending to ages 14–17 would require a separate consent, privacy, and research protocol.
+### Case-study question
 
-## Feature engineering
+As a demonstration of the platform, explore whether a four-week intention–action gap—wanting to share a personal concern with a trusted person but choosing not to—is associated with follow-up social-anxiety scores after accounting for baseline scores.
 
-Define features in versioned Python code, not ad hoc notebook cells. Calculate them only from check-ins that occur **before** the follow-up outcome.
+This is an exploratory association, not a causal or diagnostic claim. A negative, uncertain, or uninformative result is acceptable; the project succeeds when the system handles the data and analysis honestly.
 
-| Feature | Proposed calculation | Reason to study it |
+## Portfolio positioning
+
+The project should demonstrate that I can translate an ambiguous, sensitive real-world problem into a reliable software and data system. The strongest evidence will be working behavior: schema evolution, idempotent submissions, access boundaries, safe deletion, deterministic synthetic cohorts, reproducible exports, and automated tests.
+
+The project should not be presented as:
+
+- a novel theory of social anxiety;
+- a clinical screening or treatment product;
+- proof that choosing privacy is unhealthy;
+- a machine-learning system that can infer undisclosed feelings; or
+- a population-level study when only synthetic or convenience-sample data is available.
+
+## Case-study design
+
+1. Begin with synthetic cohorts and internal usability testing. Synthetic records should include controlled effect sizes, missing responses, attrition, sparse denominators, duplicate submissions, and survey-version changes.
+2. Model adults ages 18–22 completing a baseline assessment, one short check-in per week for four weeks, and a follow-up assessment.
+3. At each check-in, record structured responses about whether the participant wanted to discuss a concern, the type of trusted relationship involved, whether sharing occurred, comfort, and optional reasons for holding back. Do not collect message contents, names, contacts, exact locations, or social-media data.
+4. Keep “not applicable,” “prefer not to answer,” “I chose to keep it private,” and missing responses distinct. Lower disclosure can reflect healthy boundaries, unsafe relationships, culture, or preference—not pathology.
+5. If a real usability pilot is pursued, review university or institutional requirements before recruitment. Do not publish an association claim unless the study design, sample size, and review process support it.
+
+### Case-study measures
+
+**Outcome:** Follow-up score on the APA DSM-5-TR Severity Measure for Social Anxiety Disorder—Adult, treated as a continuous 0–40 raw or prorated score. Keep the outcome instrument separate from predictor questions and preserve its version and scoring rules.
+
+**Primary feature:** Among eligible check-ins, the proportion where `wanted_to_share = true` and `shared = false`. Treat this as a self-reported behavioral summary, not a clinical symptom.
+
+The feature contract must specify behavior when the denominator is zero, the minimum number of eligible observations, and the distinction between a valid zero and missing or insufficient data.
+
+## Engineering contributions
+
+| Area | What the project should demonstrate |
+| --- | --- |
+| Versioned contracts | Survey schemas, instrument versions, migrations, and an auditable mapping from raw fields to derived features. |
+| Temporal integrity | Valid assessment windows, prevention of future-data leakage, duplicate handling, and participant-level boundaries. |
+| Privacy lifecycle | Data minimization, opaque participant sessions, hashed recovery codes, consent history, withdrawal, and verified deletion. |
+| Reproducible data pipeline | A deterministic path from PostgreSQL export to Parquet/DuckDB, engineered features, model outputs, tables, and figures. |
+| Synthetic validation | Cohorts with known parameters that test whether the pipeline recovers expected patterns and survives missingness and attrition. |
+| Operational safety | Least-privilege access, restricted exports, secret management, and useful logs that contain no sensitive response content. |
+| Software quality | Unit, contract, migration, integration, accessibility, and end-to-end tests running in CI. |
+
+## Feature pipeline
+
+Define features in versioned Python modules rather than ad hoc notebook cells. Calculate them only from check-ins that precede the follow-up outcome.
+
+| Feature | Proposed calculation | Engineering or analytical purpose |
 | --- | --- | --- |
-| Intention–action gap | Weeks with `wanted_to_share = true` and `shared = false` divided by weeks with `wanted_to_share = true` | Captures the mismatch at the center of the hypothesis. |
-| Audience asymmetry | Difference in mean comfort ratings for friends versus family, when both are observed | Tests whether comfort depends on the relationship. |
-| Topic sensitivity gap | Difference between comfort discussing everyday issues and personal insecurity | Separates general sociability from vulnerable disclosure. |
-| Anticipated judgment rate | Fraction of relevant check-ins citing fear of judgment | Tests a proposed mechanism; examine overlap with social anxiety questionnaire items. |
-| Support mismatch | Wanted support despite reporting low confidence in a trusted person's response | Distinguishes lack of opportunity from reluctance to approach someone. |
-| Within-person variability | Variation in comfort across weeks | Explores whether comfort is stable or context dependent. |
+| Intention–action gap | Non-sharing events divided by eligible wanted-to-share events | Exercises sparse denominators, eligibility rules, and missingness. |
+| Audience asymmetry | Difference in mean comfort for friends versus family when both are observed | Exercises grouped longitudinal features and insufficient-data handling. |
+| Topic sensitivity gap | Difference between comfort with everyday issues and personal insecurity | Tests versioned item-to-feature mappings. |
+| Anticipated judgment rate | Fraction of eligible check-ins citing fear of judgment | Supports an explicit leakage and construct-overlap audit. |
+| Support mismatch | Wanted support while reporting low confidence in the likely response | Demonstrates a multi-field derived feature with documented assumptions. |
+| Within-person variability | Variation in comfort across eligible weeks | Exercises repeated-measures logic; omit when observations are insufficient. |
 
-Do not score a person for merely choosing not to share. Preserve missingness and “prefer not to answer” separately from a zero value. Define a minimum number of completed check-ins for longitudinal features and report attrition.
+Every feature should have fixtures for normal, boundary, missing, and invalid cases. The generated data dictionary should state its formula, inputs, version, eligibility rules, and known limitations.
 
 ## Analysis and validation
 
-- **Descriptive analysis:** completion and missingness rates, feature distributions, and relationship-specific patterns. Review whether questions are understood as intended through a small usability pilot.
-- **Primary statistical model:** regression of follow-up social anxiety score on the intention–action gap, adjusting for baseline score and prespecified context variables. Report effect size and uncertainty interval, not just a p-value.
-- **Incremental value:** compare a baseline-only model with one that adds engineered features. Use participant-level train/test splits or cross-validation; never split one participant's check-ins across training and test sets.
-- **Leakage audit:** identify predictor questions that effectively reword outcome items, remove them in a sensitivity analysis, and report how results change.
-- **Robustness:** examine missing-data assumptions, attrition, feature stability, calibration if making predictions, and performance by available demographic groups where sample sizes permit. Do not publish small-cell subgroup results that could expose participants.
-- **Negative result:** if engineered features add little value, report that clearly. The pipeline and careful evaluation remain the engineering contribution.
+### Pipeline validation with synthetic data
 
-Machine learning is optional. Start with transparent regression; add regularized models only if the dataset is large enough to justify them. Avoid claiming population-level or clinical performance from a small convenience sample.
+- Generate cohorts from explicit seeds and parameters.
+- Include null, weak-effect, and confounded scenarios rather than only data that confirms the case-study hypothesis.
+- Verify row counts, participant isolation, feature values, missingness flags, and exclusion reasons at every stage.
+- Test that changing a survey or feature version does not silently alter previously versioned results.
+- Rebuild the complete report from a fresh environment with one command.
+
+### Optional exploratory analysis with real data
+
+- Preregister the hypothesis, primary feature, exclusions, covariates, and analysis before inspecting outcomes.
+- Use a transparent regression of follow-up score on the gap feature while adjusting for baseline score and a small set of justified covariates.
+- Report effect sizes and uncertainty intervals, not only p-values.
+- Run sensitivity analyses for sparse denominators, attrition, missingness, and predictor questions that overlap with outcome items.
+- Keep confirmatory inference separate from optional predictive evaluation. Do not use train/test comparisons unless the participant count can support them.
+- State clearly when the sample is too small to answer the question.
+
+Four weekly observations provide only a coarse case study. Relationship-specific comparisons and within-person variability may often be unavailable; the system should surface that limitation rather than manufacture a score.
 
 ## Architecture
 
@@ -53,74 +108,64 @@ flowchart LR
     P[Participant browser] --> W[Next.js web app]
     W --> A[FastAPI service]
     A --> D[(PostgreSQL)]
-    D --> X[De-identified export]
-    X --> F[Python feature pipeline]
-    F --> M[Analysis and validation]
-    M --> R[Aggregate report and portfolio visuals]
-    S[Synthetic data generator] --> W
+    D --> X[Restricted de-identified export]
+    X --> F[Versioned Python feature pipeline]
+    F --> M[Validation and exploratory analysis]
+    M --> R[Reproducible report]
+    S[Parameterized synthetic cohort generator] --> W
     S --> F
 ```
 
-The public demo and research environment are separate. Public visitors interact with synthetic records; real participant records are never bundled into the frontend or committed to the repository. The API exposes only the check-in and self-view endpoints needed by participants. Research exports are generated through a restricted, manual workflow.
+The public demo and any real research environment are separate. Public visitors interact only with synthetic records. Real participant records are never bundled into the frontend, committed to the repository, or exposed through portfolio endpoints.
 
-### Suggested repository layout
+### Repository layout
 
 ```text
 apps/web/              Next.js participant flow and synthetic demo
-apps/api/              FastAPI endpoints, validation, persistence
-packages/contracts/    Versioned survey schema and feature definitions
-research/              ETL, feature engineering, analysis, reports
+apps/api/              FastAPI endpoints, validation, and persistence
+packages/contracts/    Versioned survey and API contracts
+research/              Synthetic generation, ETL, features, analysis, reports
 infra/                 Docker Compose and deployment configuration
-docs/                  Protocol, data dictionary, consent, model card
-tests/                 API, feature, and critical user-flow tests
+docs/                  Data dictionary, threat model, protocol, and model card
+tests/                 Contract, migration, API, feature, and user-flow tests
 ```
 
-### Data model
+### Core data model
 
-- `participants`: random ID, age eligibility result, creation time, withdrawal state; no name or email.
-- `consent_events`: consent version, timestamp, agreement or withdrawal action.
-- `assessments`: participant ID, baseline/follow-up type, instrument version, item responses, completion time.
-- `check_ins`: participant ID, week, structured disclosure responses, completion time.
-- `study_events`: limited operational events needed to debug failed submissions, without sensitive response text.
+- `participants`: random ID, eligibility result, creation time, and withdrawal state; no name or email.
+- `consent_events`: consent version, timestamp, and agreement or withdrawal action.
+- `assessments`: participant ID, baseline/follow-up type, instrument version, item responses, and completion time.
+- `check_ins`: participant ID, study week, contract version, structured responses, and completion time.
+- `study_events`: minimal operational events required to investigate failures, without sensitive response text.
+- `exports`: export version, creation metadata, schema fingerprint, and audit information; no downloadable public endpoint.
 
-Use a random recovery code or secure session token so participants can return without supplying contact information. Store only a hash of the recovery code. Provide a participant-facing delete/withdraw flow and a documented retention schedule. Use HTTPS, least-privilege database credentials, encryption at rest where supported, and restricted export access. Do not collect free-text disclosures in the first version.
-
-## Technical stack
-
-| Layer | Choice | Purpose |
-| --- | --- | --- |
-| Frontend | TypeScript, React, Next.js, Tailwind CSS | Accessible consent, check-in, and personal trend screens; synthetic public demo. |
-| API | Python, FastAPI, Pydantic | Typed endpoints and survey response validation. |
-| Persistence | PostgreSQL, SQLAlchemy, Alembic | Relational storage and versioned migrations. |
-| Analysis | Python, Polars, DuckDB/Parquet, statsmodels, scikit-learn | Reproducible ETL, features, regression, and optional predictive comparisons. |
-| Visualization | Altair or matplotlib | Aggregate research figures and portfolio charts. |
-| Quality | pytest, Playwright, Ruff, ESLint, GitHub Actions | Feature tests, core flow checks, linting, and CI. |
-| Local environment | Docker Compose | Run web app, API, and database together. |
-| Deployment | Managed frontend/API/database services, chosen after privacy review | Host the synthetic portfolio demo first; deploy real data collection only after research and security review. |
-
-Pin dependency versions when implementation begins. Keep secrets in deployment secret stores and example environment files free of real credentials.
+Use a random recovery code or secure session token so participants can return without providing contact information. Store only a hash of a recovery code. Use HTTPS, least-privilege database credentials, deployment secret stores, and a documented retention policy.
 
 ## API outline
 
-- `POST /v1/participants`: age-eligibility and consent flow; returns an opaque session.
-- `POST /v1/assessments`: submit baseline or follow-up measure once per scheduled window.
-- `POST /v1/check-ins`: submit a structured weekly check-in.
-- `GET /v1/me/trends`: return only the participant's own descriptive summaries.
-- `DELETE /v1/me`: withdraw and delete participant data according to the consent policy.
+- `POST /v1/participants`: perform eligibility and consent flow; return an opaque session.
+- `POST /v1/assessments`: accept one valid baseline or follow-up submission per configured window.
+- `POST /v1/check-ins`: accept an idempotent, versioned weekly check-in.
+- `GET /v1/me/trends`: return only the participant’s own neutral descriptive summaries.
+- `DELETE /v1/me`: withdraw and delete or tombstone data according to the documented policy.
 
-Version the survey contract and reject invalid or duplicate submissions. Keep an auditable mapping from raw questions to engineered features.
+Reject invalid versions, impossible state transitions, unauthorized access, and duplicate submissions. Test those behaviors directly.
 
 ## Milestones and definition of done
 
-1. **Protocol and mock data:** write the hypothesis, exact questions, data dictionary, consent text, threat model, and synthetic-data generator. Done when a synthetic participant can complete all study weeks.
-2. **Vertical slice:** implement consent, baseline, one check-in, follow-up, personal trends, persistence, and deletion. Done when the complete flow passes an end-to-end test and works with keyboard navigation.
-3. **Research pipeline:** export de-identified data; implement features and baseline regression; generate a reproducible report. Done when one command rebuilds all tables and figures from an input export.
-4. **Validation:** run leakage and missingness checks, participant-level evaluation, sensitivity analyses, and documentation. Done when the report states limitations and can reproduce its results from a fresh environment.
-5. **Pilot and portfolio:** conduct a small adult usability pilot after required reviews, revise confusing questions, and publish the synthetic demo plus methods and findings. Do not claim a social anxiety association until supported by actual results.
+1. **Contracts and synthetic cohorts:** define versioned questions, database constraints, feature rules, and a parameterized generator. Done when seeded cohorts cover null, effect, missingness, attrition, and schema-change scenarios.
+2. **Tested vertical slice:** implement consent, baseline, check-ins, follow-up, personal trends, persistence, and withdrawal. Done when the flow passes API and browser tests, including keyboard navigation and duplicate-submission cases.
+3. **Privacy lifecycle:** implement recovery, authorization boundaries, restricted exports, logging rules, and deletion verification. Done when tests prove one participant cannot access another’s data and withdrawal produces the documented result.
+4. **Reproducible pipeline:** implement export, validation, feature engineering, exploratory regression, and report generation. Done when one command rebuilds all artifacts from a clean environment and the synthetic scenarios behave as expected.
+5. **Portfolio release:** deploy the synthetic demo and publish concise architecture, threat-model, and reproducibility documentation. Done when a reviewer can run the system, understand its tradeoffs, and verify the main engineering claims.
+6. **Optional pilot:** pursue a small adult usability or research pilot only after the appropriate review. Report it modestly and separately from the engineering accomplishment.
 
 ## Background sources
 
-- [Pew Research Center: teens' comfort discussing mental health differs by audience](https://www.pewresearch.org/internet/2025/04/22/teens-social-media-and-mental-health/)
-- [Study of disclosure and service use in socially anxious adolescents](https://pmc.ncbi.nlm.nih.gov/articles/PMC3763858/)
-- [Mini-SPIN validation in adolescents](https://pubmed.ncbi.nlm.nih.gov/21944882/)
-- [UNICEF guidance on ethical research involving children](https://www.unicef.org/innocenti/reports/ethical-research-involving-children)
+- [APA DSM-5-TR Severity Measure for Social Anxiety Disorder—Adult](https://www.psychiatry.org/File%20Library/Psychiatrists/Practice/DSM/DSM-5-TR/APA-DSM5TR-SeverityMeasureForSocialAnxietyDisorderAdult.pdf)
+- [Development and initial validation of the DSM-5 dimensional anxiety scales](https://pubmed.ncbi.nlm.nih.gov/23148016/)
+- [Community-sample psychometrics for the DSM-5 dimensional anxiety scales](https://pmc.ncbi.nlm.nih.gov/articles/PMC6877262/)
+- [Social context and the real-world consequences of social anxiety](https://pmc.ncbi.nlm.nih.gov/articles/PMC7028452/)
+- [Self-disclosure and mental health service use in socially anxious adolescents](https://pmc.ncbi.nlm.nih.gov/articles/PMC3763858/)
+- [Effects of safety-behavior fading on social anxiety and emotional disclosure](https://pubmed.ncbi.nlm.nih.gov/36029642/)
+- [Systematic review of self-disclosure interventions for adolescents and young adults](https://pubmed.ncbi.nlm.nih.gov/36738384/)
