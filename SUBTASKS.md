@@ -62,10 +62,11 @@ Tasks are ordered broadly by dependency; items marked **gate** must be completed
   - Keep “prefer not to answer,” “not applicable,” and true zero values distinct.
 - [x] **PRO-09 — Write the research limitations statement**
   - Cover healthy privacy, boundaries, unsafe relationships, culture, convenience sampling, association versus causation, and the separate requirements for minors.
-- [ ] **PRO-10 — Align project-facing documents with the engineering case study**
+- [x] **PRO-10 — Align project-facing documents with the engineering case study**
   - Update the README, protocol introduction, limitations, and optional analysis protocol so they distinguish personal motivation, synthetic pipeline validation, and optional empirical research.
   - Add the existing related literature, sparse repeated measures, and the engineering-first positioning established in `PLAN.md`.
   - Done when no public-facing document frames the project as discovering a new psychological relationship or treats a synthetic result as a finding.
+  - Resolution: the root and protocol introductions now lead with personal motivation and engineering scope; the limitations and optional analysis protocol explicitly separate synthetic pipeline tests from any approved exploratory pilot and acknowledge the existing literature and sparse four-week design.
 
 ## 2. Contracts and data design
 
@@ -85,176 +86,193 @@ Tasks are ordered broadly by dependency; items marked **gate** must be completed
   - Done when migrations apply to an empty database and can be tested in CI.
 - [x] **DAT-06 — Document raw-to-feature lineage**
   - Create an auditable mapping from each raw question and response code to every derived variable.
-- [ ] **DAT-07 — Prove contract and schema evolution**
+- [x] **DAT-07 — Prove contract and schema evolution**
   - Add a second fixture contract or instrument version and document its compatible and incompatible changes.
   - Verify that migrations, API validation, exports, and the feature pipeline preserve version identity and do not silently reinterpret older records.
   - Done when CI exercises both versions and produces explicit failures for unsupported mappings.
+  - Resolution: CI exercises `1.0.0-draft` and the additive `1.1.0-fixture` through exact-schema validation, database persistence, feature projection, and fingerprinted export envelopes; `2.0.0-unsupported` fails before mapping.
 
 ## 3. Privacy and security
 
-- [ ] **SEC-01 — Create a threat model**
+- [x] **SEC-01 — Create a threat model**
   - Identify assets, actors, trust boundaries, abuse cases, re-identification risks, and mitigations for the browser, API, database, exports, and public demo.
-- [ ] **SEC-02 — Minimize operational logging**
+- [x] **SEC-02 — Minimize operational logging**
   - Define the limited `study_events` allowlist and prohibit sensitive response bodies, tokens, and disclosure content in logs.
-- [ ] **SEC-03 — Implement participant authentication/recovery**
+- [x] **SEC-03 — Implement participant authentication/recovery**
   - Use an opaque session and random recovery code or equivalent mechanism without requiring contact information.
   - Store only a strong hash of the recovery code.
-- [ ] **SEC-04 — Enforce participant data isolation**
+- [x] **SEC-04 — Enforce participant data isolation**
   - Ensure self-view, submission, withdrawal, and deletion operations can access only the authenticated participant’s records.
-- [ ] **SEC-05 — Implement secrets and credential handling**
+- [x] **SEC-05 — Implement secrets and credential handling**
   - Keep secrets out of source control and use least-privilege database credentials and deployment secret stores.
-- [ ] **SEC-06 — Write the retention and deletion policy**
+- [x] **SEC-06 — Write the retention and deletion policy**
   - Define retention periods, withdrawal semantics, backups, derived exports, and deletion verification.
-- [ ] **SEC-07 — Design restricted research exports**
+- [x] **SEC-07 — Design restricted research exports**
   - Require a manual, authorized workflow; remove direct/operational identifiers; record export version, schema fingerprint, creation metadata, and provenance in an export audit record.
-- [ ] **SEC-08 — Complete a pre-deployment security review — gate for real data**
+- [x] **SEC-08 — Complete a pre-deployment security review — gate for real data**
   - Verify HTTPS, encryption at rest where supported, access control, dependency/security checks, logging safety, and export restrictions.
+  - Resolution: the review permits synthetic local development but keeps the real-data gate closed pending HTTPS/encryption evidence, rate limiting, production IAM/secrets, backup testing, continuous vulnerability scanning, and the institutional/readiness gates.
 
 ## 4. Synthetic data and fixtures
 
-- [ ] **SYN-01 — Define synthetic participant scenarios**
+- [x] **SYN-01 — Define synthetic participant scenarios**
   - Cover complete participation, partial completion, no desire to share, sharing after intent, choosing privacy, prefer-not-to-answer, varied audiences, and withdrawal.
   - Define cohort-level null, weak-effect, known-effect, and confounded scenarios. Parameters must describe the data-generating assumptions without implying that they represent real people.
-- [ ] **SYN-02 — Implement the synthetic-data generator**
+- [x] **SYN-02 — Implement the synthetic-data generator**
   - Generate contract-valid participants, assessments, four weeks of check-ins, and expected feature outputs using explicit parameters and a reproducible seed.
   - Support missingness, attrition, sparse denominators, and multiple supported contract versions.
-- [ ] **SYN-03 — Add edge-case fixtures**
+- [x] **SYN-03 — Add edge-case fixtures**
   - Include missing weeks, zero and one-event eligible denominators, duplicate attempts, invalid windows, sparse audience observations, extreme instrument values, withdrawal, and unsupported schema versions.
-- [ ] **SYN-04 — Validate synthetic data**
+- [x] **SYN-04 — Validate synthetic data**
   - Run contract checks, relational integrity checks, parameter/range checks, and a clear synthetic-data marker.
   - Verify that empirical feature summaries agree with expected behavior for seeded null, effect, missingness, and attrition scenarios within documented tolerances.
-- [ ] **SYN-05 — Prevent synthetic/real data mixing**
+- [x] **SYN-05 — Prevent synthetic/real data mixing**
   - Separate environments and configuration, and add safeguards so real records cannot be bundled into the frontend or committed.
-- [ ] **SYN-06 — Add deterministic regression fixtures**
+- [x] **SYN-06 — Add deterministic regression fixtures**
   - Commit small, reviewable synthetic fixtures with expected intermediate tables, feature values, exclusions, and report summaries.
   - Done when unintended pipeline changes fail tests with a useful explanation rather than silently changing published artifacts.
+  - Resolution: seeded cohorts cover all declared scenarios and two contract versions; committed edge/regression fixtures freeze raw rows, expected feature values, exclusions, and the synthetic report label.
 
 ## 5. API implementation
 
-- [ ] **API-01 — Bootstrap the FastAPI service**
+- [x] **API-01 — Bootstrap the FastAPI service**
   - Add configuration, database sessions, health checks, structured safe errors, and API versioning.
-- [ ] **API-02 — Implement `POST /v1/participants`**
+- [x] **API-02 — Implement `POST /v1/participants`**
   - Validate age eligibility and consent version, create a random participant ID, record the consent event, and return an opaque session.
-- [ ] **API-03 — Implement `POST /v1/assessments`**
+- [x] **API-03 — Implement `POST /v1/assessments`**
   - Accept baseline or follow-up responses only during allowed windows and handle retries idempotently while rejecting conflicting duplicate submissions.
-- [ ] **API-04 — Implement `POST /v1/check-ins`**
+- [x] **API-04 — Implement `POST /v1/check-ins`**
   - Validate structured responses, contract versions, week/window constraints, and idempotency keys while preserving all missing-value categories.
-- [ ] **API-05 — Implement `GET /v1/me/trends`**
+- [x] **API-05 — Implement `GET /v1/me/trends`**
   - Return only neutral, descriptive summaries for the current participant.
   - Do not return diagnoses, risk predictions, cohort comparisons, or treatment guidance.
-- [ ] **API-06 — Implement `DELETE /v1/me`**
+- [x] **API-06 — Implement `DELETE /v1/me`**
   - Record withdrawal and delete or schedule deletion according to the consent and retention policy.
-- [ ] **API-07 — Add API audit events**
+- [x] **API-07 — Add API audit events**
   - Record only the minimal operational events needed to investigate failed submissions and deletion requests.
-- [ ] **API-08 — Add API tests**
+- [x] **API-08 — Add API tests**
   - Test authorization, isolation, validation, safe retries, conflicting duplicates, versions, windows, withdrawal, deletion, redacted logging, and concurrency-sensitive constraints.
+  - Resolution: API integration tests cover enrollment/recovery, token rotation, participant isolation, exact versions, strict values, server windows, lifecycle order, idempotent replay/conflict, uniqueness, neutral trends, deletion/revocation, allowlisted events, and redaction.
 
 ## 6. Participant web application
 
-- [ ] **WEB-01 — Bootstrap the Next.js application**
+- [x] **WEB-01 — Bootstrap the Next.js application**
   - Configure TypeScript, Tailwind CSS, API access, error handling, and accessible shared components.
-- [ ] **WEB-02 — Build eligibility and consent flow**
+- [x] **WEB-02 — Build eligibility and consent flow**
   - Show versioned consent, confirm ages 18–22, handle ineligibility neutrally, and create the participant session.
-- [ ] **WEB-03 — Build baseline assessment flow**
+- [x] **WEB-03 — Build baseline assessment flow**
   - Render the chosen instrument separately from predictor/context questions and preserve partial/missing response semantics.
-- [ ] **WEB-04 — Build weekly check-in flow**
+- [x] **WEB-04 — Build weekly check-in flow**
   - Collect desire to share, intended audience, action, comfort, anticipated judgment, support confidence, and explicit privacy/nonresponse choices.
-- [ ] **WEB-05 — Build follow-up assessment flow**
+- [x] **WEB-05 — Build follow-up assessment flow**
   - Reuse the versioned outcome instrument and enforce the follow-up window.
-- [ ] **WEB-06 — Build participant trends**
+- [x] **WEB-06 — Build participant trends**
   - Present only the participant’s descriptive history with neutral explanations and appropriate sparse-data states.
-- [ ] **WEB-07 — Build return/recovery flow**
+- [x] **WEB-07 — Build return/recovery flow**
   - Allow participants to resume without providing contact information and explain how to protect the recovery code.
-- [ ] **WEB-08 — Build withdrawal/deletion flow**
+- [x] **WEB-08 — Build withdrawal/deletion flow**
   - Clearly describe consequences, require confirmation, call the deletion endpoint, and terminate the session.
-- [ ] **WEB-09 — Build synthetic public-demo mode**
+- [x] **WEB-09 — Build synthetic public-demo mode**
   - Use synthetic records only, label them clearly, and prevent demo actions from reaching the research environment.
   - Present the project as an engineering case study, not as evidence that the case-study hypothesis is true.
-- [ ] **WEB-10 — Complete accessibility checks**
+- [x] **WEB-10 — Complete accessibility checks**
   - Verify keyboard navigation, focus order, labels, error association, contrast, responsive layout, and screen-reader behavior for critical flows.
-- [ ] **WEB-11 — Add critical user-flow tests**
+- [x] **WEB-11 — Add critical user-flow tests**
   - Cover consent through follow-up, return sessions, validation errors, trends, withdrawal, deletion, and demo isolation in Playwright.
+  - Resolution: the responsive Next.js flow implements every participant stage, keeps the public demo synthetic and network-isolated, and passes keyboard, focus, mobile, validation, deletion, and Axe checks in Playwright.
 
 ## 7. Research export and feature pipeline
 
-- [ ] **RES-01 — Define the export schema**
+- [x] **RES-01 — Define the export schema**
   - Include only analysis-required fields plus schema, survey, and export versions; exclude session/recovery credentials and operational identifiers.
-- [ ] **RES-02 — Implement the de-identified export**
+- [x] **RES-02 — Implement the de-identified export**
   - Produce a versioned Parquet or equivalent research artifact through the restricted workflow and record its schema fingerprint and provenance.
-- [ ] **RES-03 — Implement export validation**
+- [x] **RES-03 — Implement export validation**
   - Check uniqueness, joins, allowed values, date ordering, withdrawal handling, and absence of prohibited fields.
-- [ ] **RES-04 — Build reproducible ETL**
+- [x] **RES-04 — Build reproducible ETL**
   - Load raw exports, validate versions, normalize response codes, preserve missingness, and create analysis-ready tables.
-- [ ] **RES-05 — Implement the intention–action gap**
-  - Use only pre-follow-up check-ins and the preregistered minimum-completion rule.
+- [x] **RES-05 — Implement the intention–action gap**
+  - Use only pre-follow-up check-ins and the optional protocol's prespecified minimum-completion rule.
   - Return missing—not zero—when there are no eligible `wanted_to_share = true` weeks.
-- [ ] **RES-06 — Implement secondary features**
+- [x] **RES-06 — Implement secondary features**
   - Add audience asymmetry, topic sensitivity gap, anticipated judgment rate, support mismatch, and within-person variability exactly as contracted.
-- [ ] **RES-07 — Add feature unit tests**
+- [x] **RES-07 — Add feature unit tests**
   - Test formulas, eligible denominators, sparse observations, missing categories, time cutoffs, and expected values from synthetic fixtures.
-- [ ] **RES-08 — Produce a feature-quality report**
+- [x] **RES-08 — Produce a feature-quality report**
   - Report coverage, distributions, denominator sizes, missingness, stability, minimum-check-in exclusions, feature-contract versions, and unsupported mappings.
+  - Resolution: a role-gated, audited Parquet export uses fresh analysis IDs and relative study days; validation, explicit-version ETL, all contracted features, quality summaries, and tamper/formula/cutoff tests run in CI.
 
 ## 8. Pipeline validation, exploratory analysis, and reporting
 
-- [ ] **ANA-01 — Validate known synthetic scenarios**
+- [x] **ANA-01 — Validate known synthetic scenarios**
   - Run null, weak-effect, known-effect, confounded, missingness, and attrition cohorts through the complete pipeline.
   - Compare generated summaries and estimates with scenario expectations using documented tolerances.
   - Done when the validation demonstrates pipeline behavior, without presenting synthetic estimates as research findings.
-- [ ] **ANA-02 — Generate descriptive quality statistics**
+- [x] **ANA-02 — Generate descriptive quality statistics**
   - Report cohort flow, completion, attrition, missingness, feature coverage, denominator sizes, and relationship-specific availability.
   - Make insufficient-data states visible instead of coercing them to zero.
-- [ ] **ANA-03 — Implement the optional exploratory regression**
+- [x] **ANA-03 — Implement the optional exploratory regression**
   - For an approved real dataset, regress follow-up social-anxiety score on the intention–action gap, baseline score, and a small set of prespecified context variables.
   - Report coefficient/effect size and uncertainty interval, not only a p-value, and state when the sample cannot answer the question.
   - The implementation may be exercised on synthetic data, but synthetic output is only a software test.
-- [ ] **ANA-04 — Run the leakage sensitivity analysis**
+- [x] **ANA-04 — Run the leakage sensitivity analysis**
   - Remove flagged predictor questions/features and report how estimates change; do not describe construct overlap as predictive success.
-- [ ] **ANA-05 — Run missingness and attrition analyses**
+- [x] **ANA-05 — Run missingness and attrition analyses**
   - Test prespecified missing-data assumptions and, for real data, compare included versus excluded or attrited participants where disclosure risk permits.
-- [ ] **ANA-06 — Run feature-stability and robustness checks**
+- [x] **ANA-06 — Run feature-stability and robustness checks**
   - Assess sensitivity to sparse denominators, the minimum check-in threshold, influential observations, model specification, and feature-contract versions.
-- [ ] **ANA-07 — Gate predictive modeling behind sample justification**
+- [x] **ANA-07 — Gate predictive modeling behind sample justification**
   - Keep prediction out of the core portfolio scope unless a documented sample-size and use-case review justifies it.
   - If prediction is later performed, keep all records from a participant in the same fold and evaluate uncertainty and calibration without making clinical claims.
-- [ ] **ANA-08 — Perform privacy-safe subgroup checks only if justified**
+- [x] **ANA-08 — Perform privacy-safe subgroup checks only if justified**
   - For approved real data, analyze demographic groups only when both analytical power and disclosure thresholds are met; otherwise omit the comparison and explain why.
-- [ ] **ANA-09 — Build aggregate figures and tables**
+- [x] **ANA-09 — Build aggregate figures and tables**
   - Create reproducible Altair or matplotlib outputs with clear labels, data-source markers, uncertainty, sample sizes, and no individual-level disclosure.
   - Apply an unmistakable synthetic label to every demo artifact generated from synthetic cohorts.
-- [ ] **ANA-10 — Generate the reproducible report**
+- [x] **ANA-10 — Generate the reproducible report**
   - Separate pipeline validation from optional exploratory findings, state limitations, and report negative or uninformative results plainly.
   - Lead with the engineering purpose and never imply that a seeded synthetic association is an empirical discovery.
-- [ ] **ANA-11 — Add a one-command rebuild**
+- [x] **ANA-11 — Add a one-command rebuild**
   - Recreate validated intermediate tables, features, figures, and the report from a clean environment and explicit input version.
+  - Resolution: `make report` rebuilds all six declared synthetic scenarios into validated export tables, features, quality and analysis JSON, an aggregate labeled figure, and a report that separates software validation from the still-gated optional real-data path.
 
 ## 9. Validation, documentation, and readiness
 
-- [ ] **VAL-01 — Conduct internal usability testing with synthetic data**
+- [x] **VAL-01 — Conduct internal usability testing with synthetic data**
   - Verify question interpretation, sensitive wording, completion time, recovery, trends, withdrawal, and deletion.
-- [ ] **VAL-02 — Revise confusing questions and version changes**
+  - Resolution: a documented heuristic walkthrough plus desktop/mobile Playwright and Axe coverage verified the complete fictional flow; automated duration is explicitly not presented as a human completion-time estimate.
+- [x] **VAL-02 — Revise confusing questions and version changes**
   - Record what changed, why, and whether contracts, fixtures, preregistration, or analysis code must also change.
-- [ ] **VAL-03 — Validate the full vertical slice**
+  - Resolution: the validation change log records heading/focus, alert-selection, instrument-source, baseline-context, and public-endpoint revisions with their version impacts.
+- [x] **VAL-03 — Validate the full vertical slice**
   - Run eligibility, consent, baseline, four check-ins, follow-up, trends, restricted export, synthetic validation, report generation, and deletion end to end.
-- [ ] **VAL-04 — Test a fresh-environment reproduction**
+  - Resolution: API integration now exercises enrollment through four timed check-ins, follow-up, trends, restricted export, feature construction, and deletion; browser and report tests cover the remaining presentation and scenario paths.
+- [x] **VAL-04 — Test a fresh-environment reproduction**
   - From a clean checkout, start the stack, apply migrations, generate synthetic data, run tests, and rebuild the report.
-- [ ] **VAL-05 — Write operational documentation**
+  - Resolution: a source-only fresh copy installed pinned dependencies, passed 47 Python and four browser tests, built the web app, regenerated data/report, applied all migrations, and started a healthy clean Compose stack.
+- [x] **VAL-05 — Write operational documentation**
   - Document deployment, rollback, migrations, backups, restore testing, incidents, access review, exports, and deletion requests.
-- [ ] **VAL-06 — Write the system and case-study card**
+  - Resolution: `docs/operations/runbook.md` covers every required operating procedure while keeping research deployment gated.
+- [x] **VAL-06 — Write the system and case-study card**
   - Document the personal motivation, primary engineering contribution, intended use, non-uses, data source, contract versions, features, validation, privacy, ethics, and known failure modes.
   - Distinguish synthetic pipeline evidence from any empirical evidence and state that the system is not diagnostic or therapeutic.
-- [ ] **VAL-07 — Complete the real-data readiness review — gate**
+  - Resolution: `docs/system-card.md` documents motivation, uses/non-uses, versions, features, evidence, privacy, ethics, and known failure modes without empirical claims.
+- [x] **VAL-07 — Complete the real-data readiness review — gate**
   - Confirm institutional approval, consent version, instrument permissions, threat model, security review, retention policy, access controls, and incident procedures.
+  - Resolution: the dated review decision is **NOT READY**. Institutional approval, research consent, production transport/storage/IAM, rate limiting, backup restore, incident exercise, vulnerability monitoring, and analytical adequacy remain blocking; the real-participant gate stays closed.
 
 ## 10. Portfolio release and optional pilot
 
 - [ ] **REL-01 — Deploy the synthetic demo**
   - Deploy the public web/API experience with synthetic data, HTTPS, monitoring, and environment isolation.
+  - Status: the non-root production web image and release configuration are ready; a hosting provider/project, deployment credential, public URL, HTTPS settings, and monitoring destination require user input.
 - [ ] **REL-02 — Verify the public artifact**
   - Confirm no real records, credentials, internal endpoints, small-cell results, or sensitive logs are exposed.
+  - Status: the local deployable artifact passes automated scanning and runtime checks; deployed URL, network, TLS, and monitoring verification depend on REL-01.
 - [ ] **REL-03 — Publish the engineering case study**
   - Explain the personal motivation without claiming novelty, then document the architecture, versioned contracts, privacy lifecycle, synthetic scenarios, reproducibility evidence, tradeoffs, and limitations.
   - Describe the disclosure question as the system’s case study and explain why privacy choices are not pathology.
+  - Status: a publication-ready draft exists at `docs/release/engineering-case-study.md`; external publication depends on the chosen portfolio venue.
 - [ ] **REL-04 — Run an approved adult usability pilot — optional**
   - Begin only after `PRO-07`, `SEC-08`, and `VAL-07` are cleared.
   - Track recruitment, consent, comprehension, technical failures, completion, and withdrawal without expanding data collection ad hoc.

@@ -1,6 +1,6 @@
 .DEFAULT_GOAL := help
 
-.PHONY: help setup dev stop lint typecheck test e2e check migrate synthetic report
+.PHONY: help setup dev stop lint typecheck test e2e check migrate synthetic report release-check
 
 help:
 	@awk 'BEGIN {FS = ":.*## "} /^[a-zA-Z_-]+:.*## / {printf "%-12s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -39,8 +39,12 @@ migrate: ## Apply database migrations
 
 synthetic: ## Generate deterministic synthetic study data
 	@test -f research/generate_synthetic.py || (echo "Synthetic generation is not implemented yet (SYN-02)." && exit 1)
-	.venv/bin/python research/generate_synthetic.py
+	.venv/bin/python -m research.generate_synthetic
 
 report: ## Rebuild research tables, figures, and report
 	@test -f research/build_report.py || (echo "Report generation is not implemented yet (ANA-11)." && exit 1)
-	.venv/bin/python research/build_report.py
+	.venv/bin/python -m research.build_report
+
+release-check: ## Build and scan the synthetic public web artifact
+	npm run build --workspace apps/web
+	.venv/bin/python scripts/verify_public_artifact.py

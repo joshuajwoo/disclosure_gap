@@ -29,6 +29,10 @@ jobs:
       - run: ruff check .
       - run: mypy apps/api/disclosure_gap_api research
       - run: pytest
+      - name: Build and scan the synthetic public artifact
+        run: make release-check
+      - name: Rebuild the synthetic validation report
+        run: make report
       - name: Apply migrations to an empty database
         working-directory: apps/api
         env:
@@ -36,5 +40,7 @@ jobs:
         run: alembic upgrade head
       - name: Verify Compose configuration
         run: docker compose -f infra/compose.yaml config --quiet
-      - name: Run critical safety-boundary tests
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+      - name: Run critical participant-flow tests
         run: npm run e2e
