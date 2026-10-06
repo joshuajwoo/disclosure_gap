@@ -1,0 +1,21 @@
+name: Monitor synthetic demo
+
+on:
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  synthetic-demo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify HTTPS demo and synthetic marker
+        run: |
+          set -euo pipefail
+          body="$(curl --fail --silent --show-error --location \
+            --retry 3 --retry-delay 2 \
+            https://joshuajwoo.github.io/disclosure_gap/)"
+          grep --fixed-strings "SYNTHETIC DEMO" <<<"$body"

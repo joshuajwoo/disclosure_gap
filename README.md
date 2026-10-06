@@ -1,5 +1,7 @@
 # The Disclosure Gap
 
+[Open the synthetic public demo](https://joshuajwoo.github.io/disclosure_gap/) · [Read the engineering case study](docs/release/engineering-case-study.md)
+
 A privacy-first longitudinal software project built around a personally meaningful question: how can a system responsibly represent the moments when someone wants support from a trusted person but decides not to ask for it?
 
 The disclosure question is a case study, not a claim of a new psychological discovery. Social anxiety, avoidance, self-disclosure, and help-seeking already have substantial research literatures. The primary contribution here is the engineering system: versioned data collection, temporal and integrity constraints, consent and deletion workflows, restricted exports, documented feature lineage, deterministic synthetic cohorts, and reproducible analysis.

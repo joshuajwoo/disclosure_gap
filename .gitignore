@@ -3,6 +3,7 @@
 .env.*
 !.env.example
 .next/
+out/
 node_modules/
 playwright-report/
 test-results/

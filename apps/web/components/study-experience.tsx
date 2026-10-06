@@ -377,6 +377,17 @@ export function StudyExperience() {
               Recover a session
             </button>
           </div>
+          <p className="hint">
+            Read the{" "}
+            <a href="https://github.com/joshuajwoo/disclosure_gap/blob/main/docs/release/engineering-case-study.md">
+              engineering case study
+            </a>{" "}
+            or inspect the{" "}
+            <a href="https://github.com/joshuajwoo/disclosure_gap">
+              reproducible source
+            </a>
+            .
+          </p>
         </section>
       )}
 
