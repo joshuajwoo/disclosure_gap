@@ -1,0 +1,32 @@
+{
+  "synthetic": true,
+  "fixtureVersion": "1.0.0",
+  "cases": [
+    { "name": "missing_weeks", "completedWeeks": [1, 2], "expectedGap": null },
+    { "name": "zero_eligible_denominator", "actions": [], "expectedGap": null },
+    {
+      "name": "one_eligible_event",
+      "actions": ["chose_private"],
+      "expectedGap": null
+    },
+    {
+      "name": "duplicate_attempt",
+      "week": 2,
+      "expectedApiCode": "duplicate_submission"
+    },
+    { "name": "invalid_window", "week": 4, "expectedApiCode": "window_closed" },
+    {
+      "name": "sparse_audience",
+      "audiences": ["friend"],
+      "expectedAudienceAsymmetry": null
+    },
+    { "name": "instrument_minimum", "score": 0 },
+    { "name": "instrument_maximum", "score": 40 },
+    { "name": "withdrawal", "expectedState": "deleted" },
+    {
+      "name": "unsupported_schema",
+      "contractVersion": "2.0.0-unsupported",
+      "expectedApiCode": "invalid_contract"
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "synthetic": true,
+  "fixtureVersion": "1.0.0",
+  "checkIns": [
+    {
+      "participant": "synthetic-a",
+      "week": 1,
+      "wanted": "yes",
+      "action": "shared"
+    },
+    {
+      "participant": "synthetic-a",
+      "week": 2,
+      "wanted": "yes",
+      "action": "chose_private"
+    },
+    {
+      "participant": "synthetic-a",
+      "week": 3,
+      "wanted": "yes",
+      "action": "shared"
+    },
+    {
+      "participant": "synthetic-a",
+      "week": 4,
+      "wanted": "yes",
+      "action": "chose_private"
+    },
+    { "participant": "synthetic-b", "week": 1, "wanted": "no", "action": null },
+    { "participant": "synthetic-b", "week": 2, "wanted": "no", "action": null },
+    { "participant": "synthetic-b", "week": 3, "wanted": "no", "action": null }
+  ],
+  "expectedFeatures": [
+    {
+      "participant": "synthetic-a",
+      "completedCheckIns": 4,
+      "intentionActionGap": 0.5,
+      "exclusionReason": null
+    },
+    {
+      "participant": "synthetic-b",
+      "completedCheckIns": 3,
+      "intentionActionGap": null,
+      "exclusionReason": "no_eligible_wanted_weeks"
+    }
+  ],
+  "expectedReport": {
+    "participants": 2,
+    "featureAvailable": 1,
+    "featureMissing": 1,
+    "dataSourceLabel": "SYNTHETIC — PIPELINE VALIDATION ONLY"
+  }
+}
