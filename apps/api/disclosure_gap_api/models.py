@@ -39,6 +39,7 @@ class Participant(Base):
     age_band: Mapped[str] = mapped_column(String(8), nullable=False)
     contract_version: Mapped[str] = mapped_column(String(24), nullable=False)
     recovery_code_hash: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    session_token_hash: Mapped[str | None] = mapped_column(String(64), unique=True, nullable=True)
     withdrawal_state: Mapped[str] = mapped_column(String(24), default="active", nullable=False)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
@@ -96,6 +97,11 @@ class BaselineContext(Base):
             name="ck_baseline_contexts_insecurity",
         ),
         UniqueConstraint("participant_id", name="uq_baseline_contexts_participant"),
+        UniqueConstraint(
+            "participant_id",
+            "idempotency_key",
+            name="uq_baseline_contexts_participant_idempotency",
+        ),
     )
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
@@ -103,6 +109,8 @@ class BaselineContext(Base):
         ForeignKey("participants.id", ondelete="CASCADE"), nullable=False
     )
     contract_version: Mapped[str] = mapped_column(String(24), nullable=False)
+    idempotency_key: Mapped[str | None] = mapped_column(String(64))
+    payload_hash: Mapped[str | None] = mapped_column(String(64))
     support_confidence: Mapped[int | None] = mapped_column(Integer)
     support_confidence_nonresponse: Mapped[str | None] = mapped_column(String(32))
     everyday_comfort: Mapped[int | None] = mapped_column(Integer)
@@ -133,6 +141,9 @@ class Assessment(Base):
         UniqueConstraint(
             "participant_id", "assessment_type", name="uq_assessments_participant_type"
         ),
+        UniqueConstraint(
+            "participant_id", "idempotency_key", name="uq_assessments_participant_idempotency"
+        ),
     )
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
@@ -144,6 +155,8 @@ class Assessment(Base):
     instrument_version: Mapped[str] = mapped_column(String(40), nullable=False)
     language: Mapped[str] = mapped_column(String(12), nullable=False)
     contract_version: Mapped[str] = mapped_column(String(24), nullable=False)
+    idempotency_key: Mapped[str | None] = mapped_column(String(64))
+    payload_hash: Mapped[str | None] = mapped_column(String(64))
     item_responses: Mapped[list[dict[str, object]]] = mapped_column(JSON, nullable=False)
     total_score: Mapped[int | None] = mapped_column(Integer)
     completed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
@@ -175,6 +188,9 @@ class CheckIn(Base):
             name="ck_check_ins_support",
         ),
         UniqueConstraint("participant_id", "week", name="uq_check_ins_participant_week"),
+        UniqueConstraint(
+            "participant_id", "idempotency_key", name="uq_check_ins_participant_idempotency"
+        ),
     )
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
@@ -183,6 +199,8 @@ class CheckIn(Base):
     )
     week: Mapped[int] = mapped_column(Integer, nullable=False)
     contract_version: Mapped[str] = mapped_column(String(24), nullable=False)
+    idempotency_key: Mapped[str | None] = mapped_column(String(64))
+    payload_hash: Mapped[str | None] = mapped_column(String(64))
     wanted_to_share: Mapped[str] = mapped_column(String(24), nullable=False)
     intended_audience: Mapped[str | None] = mapped_column(String(32))
     sharing_action: Mapped[str | None] = mapped_column(String(32))
@@ -220,3 +238,19 @@ class StudyEvent(Base):
     )
 
     participant: Mapped[Participant | None] = relationship(back_populates="study_events")
+
+
+class ExportAudit(Base):
+    __tablename__ = "export_audits"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    export_version: Mapped[str] = mapped_column(String(24), nullable=False)
+    schema_fingerprint: Mapped[str] = mapped_column(String(64), nullable=False)
+    created_by_role: Mapped[str] = mapped_column(String(32), nullable=False)
+    source_contract_versions: Mapped[list[str]] = mapped_column(JSON, nullable=False)
+    row_counts: Mapped[dict[str, int]] = mapped_column(JSON, nullable=False)
+    provenance: Mapped[dict[str, str] | None] = mapped_column(JSON)
+    artifact_digest: Mapped[str] = mapped_column(String(64), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )

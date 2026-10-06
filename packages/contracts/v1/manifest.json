@@ -9,6 +9,7 @@
     "checkIn": "check-in.schema.json",
     "trends": "trends.schema.json"
   },
+  "researchExport": "export.schema.json",
   "featureDefinitions": "features.json",
   "instrumentDefinition": "instrument.json",
   "outcomeInstrument": {

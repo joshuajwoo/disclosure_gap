@@ -10,6 +10,7 @@ dependencies = [
   "alembic==1.15.1",
   "duckdb==1.2.1",
   "fastapi==0.142.2",
+  "greenlet==3.5.6",
   "httpx==0.28.1",
   "matplotlib==3.10.1",
   "numpy==2.2.4",
@@ -42,10 +43,13 @@ addopts = "--strict-config --strict-markers"
 [tool.ruff]
 target-version = "py312"
 line-length = 100
-exclude = [".venv"]
+exclude = [".venv", "node_modules", ".next", "data", "exports", "reports/generated"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "SIM"]
+
+[tool.ruff.lint.per-file-ignores]
+"apps/api/disclosure_gap_api/main.py" = ["B008"]
 
 [tool.mypy]
 python_version = "3.12"

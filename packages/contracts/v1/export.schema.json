@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://disclosure-gap.invalid/contracts/v1/export.schema.json",
+  "title": "Restricted research export manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "exportVersion",
+    "schemaFingerprint",
+    "synthetic",
+    "createdAt",
+    "sourceContractVersions",
+    "rowCounts",
+    "tables",
+    "provenance",
+    "artifactDigest"
+  ],
+  "properties": {
+    "exportVersion": { "const": "1.0.0" },
+    "schemaFingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "synthetic": { "type": "boolean" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "sourceContractVersions": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true
+    },
+    "rowCounts": {
+      "type": "object",
+      "additionalProperties": { "type": "integer", "minimum": 0 }
+    },
+    "tables": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^[a-z_]+\\.parquet$"
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["workflow", "approvalId", "createdByRole"],
+      "properties": {
+        "workflow": { "enum": ["restricted-manual", "synthetic-generator"] },
+        "approvalId": { "type": "string" },
+        "createdByRole": { "type": "string" }
+      }
+    },
+    "artifactDigest": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  }
+}

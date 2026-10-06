@@ -2,31 +2,42 @@ name: disclosure-gap
 
 services:
   web:
-    image: node:22.14.0-alpine
+    build:
+      context: ..
+      dockerfile: apps/web/Dockerfile
+      target: dev
     working_dir: /workspace
     command:
       [
-        "sh",
-        "-c",
-        "echo 'WEB-01 is not implemented; container is ready for development.' && tail -f /dev/null",
+        "npm",
+        "run",
+        "dev",
+        "--workspace",
+        "apps/web",
+        "--",
+        "--hostname",
+        "0.0.0.0",
       ]
     env_file: ../.env.example
     ports:
       - "3000:3000"
     volumes:
       - ..:/workspace
+      - web_node_modules:/workspace/node_modules
     depends_on:
       api:
-        condition: service_started
+        condition: service_healthy
 
   api:
-    image: python:3.12.3-slim
-    working_dir: /workspace
+    build:
+      context: ..
+      dockerfile: apps/api/Dockerfile
+    working_dir: /workspace/apps/api
     command:
       [
         "sh",
         "-c",
-        "echo 'API-01 is not implemented; container is ready for development.' && tail -f /dev/null",
+        "DATABASE_URL=$$MIGRATION_DATABASE_URL alembic upgrade head && uvicorn disclosure_gap_api.main:app --host 0.0.0.0 --port 8000",
       ]
     env_file: ../.env.example
     ports:
@@ -36,22 +47,36 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   db:
     image: postgres:17.4-alpine
     environment:
       POSTGRES_DB: disclosure_gap
-      POSTGRES_USER: disclosure_gap
-      POSTGRES_PASSWORD: local_only
+      POSTGRES_USER: disclosure_gap_admin
+      POSTGRES_PASSWORD: local_admin_only
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U disclosure_gap -d disclosure_gap"]
+      test:
+        ["CMD-SHELL", "pg_isready -U disclosure_gap_admin -d disclosure_gap"]
       interval: 5s
       timeout: 5s
       retries: 10
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./postgres/init-roles.sql:/docker-entrypoint-initdb.d/10-init-roles.sql:ro
 
 volumes:
   postgres_data:
+  web_node_modules:
