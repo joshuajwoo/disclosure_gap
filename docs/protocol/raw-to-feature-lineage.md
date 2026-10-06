@@ -1,6 +1,6 @@
 # Raw-to-feature lineage
 
-Feature contract version: 1.0.0-draft. All weekly sources must have `completed_at < follow_up.completed_at`; primary analysis additionally requires at least three completed weekly check-ins.
+Feature contract version: 1.0.0-draft. All weekly sources must have `completed_at < follow_up.completed_at`; the case-study feature additionally requires at least three completed weekly check-ins. On synthetic data this threshold tests pipeline behavior. It becomes an analysis rule only for an approved real-data pilot.
 
 | Derived field                       | Raw sources                                   | Inclusion / recode                                                                      | Missing and exclusions                                                                                                           |
 | ----------------------------------- | --------------------------------------------- | --------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
@@ -12,6 +12,6 @@ Feature contract version: 1.0.0-draft. All weekly sources must have `completed_a
 | `support_mismatch_rate`             | W1, W6 `support_confidence`                   | W1=yes and numeric W6≤2 / W1=yes and numeric W6                                         | Missing at denominator 0. Threshold frozen before outcomes.                                                                      |
 | `within_person_comfort_variability` | W4 numeric `expected_comfort`                 | Sample standard deviation (`ddof=1`)                                                    | Missing with fewer than two numeric observations.                                                                                |
 | `baseline_score`                    | baseline `SAD01`–`SAD10`                      | Sum 10 answered items; with 8–9, prorate `(sum×10)/answered` and round to nearest whole | Missing with 7 or fewer answered; unanswered is never score 0.                                                                   |
-| `follow_up_score`                   | follow-up `SAD01`–`SAD10`                     | Same APA instrument/version/language and scoring as baseline                            | Primary outcome missing with 7 or fewer answered.                                                                                |
+| `follow_up_score`                   | follow-up `SAD01`–`SAD10`                     | Same APA instrument/version/language and scoring as baseline                            | Case-study outcome missing with 7 or fewer answered.                                                                             |
 
 Canonical response values are in `packages/contracts/v1`; questionnaire wording and semantic rationale are in `survey.md` and `data-dictionary.md`. Export, survey, schema, and feature versions must accompany every analysis row.
