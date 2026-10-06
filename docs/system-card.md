@@ -60,4 +60,4 @@ Lower disclosure may represent preference, culture, safety, autonomy, or a healt
 
 ## Current readiness
 
-Synthetic local development and portfolio demonstration are supported. Real recruitment is not approved. The unresolved items in the readiness review and pre-deployment security review are hard gates, not future cleanup suggestions.
+Synthetic local development and the public portfolio demonstration at `https://joshuajwoo.github.io/disclosure_gap/` are supported. The public build is a static, browser-local walkthrough with no API or database. Real recruitment is not approved. The unresolved items in the readiness review and pre-deployment security review are hard gates, not future cleanup suggestions.

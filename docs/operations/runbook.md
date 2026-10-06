@@ -4,25 +4,22 @@ This runbook supports the synthetic portfolio environment. It does not authorize
 
 ## Deployment prerequisites
 
-An operator must select a hosting provider and supply its account/project credentials. The public release must use a separate project, database, network, and secret namespace from any future research environment. Required release configuration is:
+The synthetic portfolio release uses GitHub Pages at `https://joshuajwoo.github.io/disclosure_gap/`. It is a static export with no API, database, durable participant records, or deployment secrets. `.github/workflows/pages.yml` sets:
 
-- `APP_ENV=public-demo`
-- `ALLOW_REAL_PARTICIPANT_DATA=false`
-- `REAL_DATA_READINESS_APPROVED=false`
+- `GITHUB_PAGES=true`
 - `NEXT_PUBLIC_DEMO_MODE=true`
-- an HTTPS public origin in `WEB_ORIGIN`
-- no database or API URL embedded in the public web build unless a separately reviewed synthetic API is intentionally deployed
 
-Terminate TLS at the hosting platform or reverse proxy, redirect HTTP to HTTPS, enable platform health monitoring, and retain only availability and safe structured operational logs. Do not send response bodies, authorization headers, recovery codes, URLs with tokens, or export contents to monitoring services.
+The workflow builds the repository-relative base path, scans the exact deployable directory, and uploads it through GitHub's Pages actions. GitHub terminates TLS and redirects HTTP to HTTPS. `.github/workflows/monitor-pages.yml` checks the HTTPS endpoint and synthetic marker hourly; quiet matching prevents the response body from being printed. The public release must remain separate from any future research project, database, network, and secret namespace.
 
 ## Release and rollback
 
-1. Build immutable images from a reviewed commit and record the commit digest.
-2. Apply migrations with the migrator role before shifting traffic.
-3. Verify `/health`, the synthetic banner, demo isolation, response headers, and deletion behavior.
-4. Retain the previous known-good image digest.
-5. For an application regression, route traffic back to the previous image. Do not automatically downgrade the database.
-6. If a migration is implicated, stop writes and use a reviewed forward repair. Restore from backup only after impact and data-loss review.
+1. Merge or push a reviewed commit to `main`; CI and the Pages workflow must both pass.
+2. Record the source commit from the Pages deployment run.
+3. Verify HTTPS/redirect behavior, the synthetic banner, desktop and mobile deletion flows, network isolation, and the delivered-asset scan.
+4. For a public-demo regression, revert the faulty commit with a new reviewed commit so the workflow redeploys the previous known-good static content.
+5. Run the monitoring workflow manually after a rollback and confirm its success.
+
+If a separate API-backed environment is ever approved, build immutable images, migrate with the migrator role before shifting traffic, retain the previous image digest, and use forward database repairs rather than automatic downgrades. Those procedures do not apply to the current static portfolio deployment.
 
 ## Migrations
 

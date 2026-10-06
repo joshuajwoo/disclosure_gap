@@ -16,4 +16,4 @@ Only analysis-required structured responses, coarse/rebased study timing, an exp
 
 The export validator must check field allowlists, uniqueness, joins, temporal ordering, supported versions, withdrawal/deletion exclusions, small-cell risk, and the absence of credential/operational fields. A schema fingerprint identifies interpretation; an artifact digest identifies the exact bytes.
 
-The `export_audits` table stores provenance only and deliberately has no downloadable artifact path or public route. Export implementation and validation are scheduled for phase 7.
+The `export_audits` table stores provenance only and deliberately has no downloadable artifact path or public route. The implemented manual workflow and its validation tests remain separate from the static public deployment.

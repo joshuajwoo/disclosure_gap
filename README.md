@@ -2,6 +2,8 @@
 
 [Open the synthetic public demo](https://joshuajwoo.github.io/disclosure_gap/) · [Read the engineering case study](docs/release/engineering-case-study.md)
 
+**Status:** the synthetic portfolio release is complete. The optional real-participant branch remains deliberately closed behind institutional, security, and readiness gates.
+
 A privacy-first longitudinal software project built around a personally meaningful question: how can a system responsibly represent the moments when someone wants support from a trusted person but decides not to ask for it?
 
 The disclosure question is a case study, not a claim of a new psychological discovery. Social anxiety, avoidance, self-disclosure, and help-seeking already have substantial research literatures. The primary contribution here is the engineering system: versioned data collection, temporal and integrity constraints, consent and deletion workflows, restricted exports, documented feature lineage, deterministic synthetic cohorts, and reproducible analysis.
@@ -58,7 +60,7 @@ The API serves `/health` and versioned participant routes under `/v1`. See [`app
 
 `make report` writes ignored artifacts beneath `reports/generated/`. Every report and figure is labeled `SYNTHETIC — PIPELINE VALIDATION ONLY`. The restricted real-data export is a manual, role-gated Python workflow with no public API route; its institutional and production-security gates remain closed.
 
-Release and operating material is in [`docs/release`](docs/release), the [operations runbook](docs/operations/runbook.md), and the [system card](docs/system-card.md). A public deployment still requires a user-selected hosting project, domain or provider URL, deployment credentials, HTTPS configuration, and privacy-safe monitoring.
+Release and operating material is in [`docs/release`](docs/release), the [operations runbook](docs/operations/runbook.md), and the [system card](docs/system-card.md). GitHub Pages publishes the static, synthetic-only client over HTTPS, and an hourly GitHub Actions check monitors its availability without retaining response bodies.
 
 ## Safety boundary
 

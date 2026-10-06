@@ -4,6 +4,8 @@ This file converts `PLAN.md` into implementation-sized tasks. The disclosure que
 
 Tasks are ordered broadly by dependency; items marked **gate** must be completed before the dependent work begins. A task is not complete merely because documentation exists—the stated behavior must be demonstrable where implementation is involved.
 
+**Portfolio status (2026-10-05): complete.** Sections 0–9 and the required release tasks REL-01–03 are finished and verified. REL-04–06 are an optional, separately governed real-participant branch; leaving that branch closed is the intended safe state and does not make the portfolio release incomplete.
+
 ## 0. Project foundations
 
 - [x] **FND-01 — Create the repository structure**
@@ -263,24 +265,27 @@ Tasks are ordered broadly by dependency; items marked **gate** must be completed
 
 ## 10. Portfolio release and optional pilot
 
-- [ ] **REL-01 — Deploy the synthetic demo**
+- [x] **REL-01 — Deploy the synthetic demo**
   - Deploy the public web/API experience with synthetic data, HTTPS, monitoring, and environment isolation.
-  - Status: the non-root production web image and release configuration are ready; a hosting provider/project, deployment credential, public URL, HTTPS settings, and monitoring destination require user input.
-- [ ] **REL-02 — Verify the public artifact**
+  - Resolution: GitHub Pages serves the static synthetic walkthrough at `https://joshuajwoo.github.io/disclosure_gap/`; GitHub manages HTTPS and redirect enforcement, and an hourly Actions workflow checks availability and the synthetic marker. No API or database is deployed because the public walkthrough is intentionally browser-local and network-isolated.
+- [x] **REL-02 — Verify the public artifact**
   - Confirm no real records, credentials, internal endpoints, small-cell results, or sensitive logs are exposed.
-  - Status: the local deployable artifact passes automated scanning and runtime checks; deployed URL, network, TLS, and monitoring verification depend on REL-01.
-- [ ] **REL-03 — Publish the engineering case study**
+  - Resolution: local and CI artifact scans pass; live desktop and mobile flows reach deletion, all observed browser requests remain on GitHub Pages, HTTP redirects to HTTPS, HSTS is present, generated assets load from the repository base path, and monitoring does not print the response body.
+- [x] **REL-03 — Publish the engineering case study**
   - Explain the personal motivation without claiming novelty, then document the architecture, versioned contracts, privacy lifecycle, synthetic scenarios, reproducibility evidence, tradeoffs, and limitations.
   - Describe the disclosure question as the system’s case study and explain why privacy choices are not pathology.
-  - Status: a publication-ready draft exists at `docs/release/engineering-case-study.md`; external publication depends on the chosen portfolio venue.
+  - Resolution: the case study is published in the public GitHub repository and linked from both the repository front page and the live walkthrough.
 - [ ] **REL-04 — Run an approved adult usability pilot — optional**
   - Begin only after `PRO-07`, `SEC-08`, and `VAL-07` are cleared.
   - Track recruitment, consent, comprehension, technical failures, completion, and withdrawal without expanding data collection ad hoc.
+  - Status: intentionally not pursued for the completed portfolio release; the required real-participant gates remain closed.
 - [ ] **REL-05 — Incorporate optional pilot feedback**
   - Version questionnaire and product changes and assess whether they require protocol or analysis-plan amendments.
+  - Status: not applicable unless an approved pilot is later run.
 - [ ] **REL-06 — Publish optional exploratory findings with appropriate claims**
   - Publish only after the relevant approval and adequacy review.
   - Label results exploratory unless a stronger design was approved, report uncertainty and negative or uninformative results, and avoid causal, diagnostic, clinical, novelty, or population-wide claims.
+  - Status: not applicable unless approved real-participant work is later completed; synthetic outputs remain software-validation evidence only.
 
 ## Milestone mapping
 

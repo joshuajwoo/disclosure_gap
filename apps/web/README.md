@@ -6,4 +6,6 @@ The default `NEXT_PUBLIC_DEMO_MODE=true` build is a fully local synthetic walkth
 
 Run `npm run dev --workspace apps/web` for local development and `npm run build --workspace apps/web` for a production build.
 
-The Dockerfile exposes a bind-mounted `dev` target for Compose and a non-root `production` target containing the Next.js standalone server. The production target defaults to synthetic demo mode and does not define an API URL.
+The public release is a static export at `https://joshuajwoo.github.io/disclosure_gap/`. Set `GITHUB_PAGES=true` with `NEXT_PUBLIC_DEMO_MODE=true` to build that base-path-aware export; `.github/workflows/pages.yml` builds, scans, and deploys it. The static release has no API URL, database, server state, or real-data mode.
+
+The Dockerfile remains available for self-hosting: it exposes a bind-mounted `dev` target for Compose and a non-root `production` target containing the Next.js standalone server. The production target defaults to synthetic demo mode and does not define an API URL.
